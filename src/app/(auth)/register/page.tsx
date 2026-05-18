@@ -8,26 +8,36 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('customer');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const apiBase = process.env.NEXT_PUBLIC_API_URL;
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setNotice('');
+
+    if (!apiBase) {
+      setError('Missing NEXT_PUBLIC_API_URL. Add it to your .env file.');
+      setLoading(false);
+      return;
+    }
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+      const response = await fetch(`${apiBase}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, fullName })
+        body: JSON.stringify({ email, password, full_name: fullName, role })
       });
 
       const data = await response.json();
       
       if (response.ok) {
-        alert('Registration Success! Please login.');
-        router.push('/login'); // Redirect to login page
+        setNotice('Registration success! Please log in.');
+        setTimeout(() => router.push('/login'), 1200);
       } else {
         setError(data.message || 'Registration failed');
       }
@@ -39,42 +49,118 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <form onSubmit={handleRegister} className="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-6 text-center text-green-600">Create Account</h1>
-        
-        {error && <div className="mb-4 text-red-500 text-sm text-center">{error}</div>}
+    <div className="auth-shell">
+      <div className="auth-card auth-grid w-full max-w-5xl rounded-3xl p-6 md:p-10">
+        <div className="grid gap-10 md:grid-cols-[0.95fr_1.05fr]">
+          <form onSubmit={handleRegister} className="fade-up order-2 rounded-2xl bg-white/90 p-6 shadow-xl md:order-1 md:p-8">
+            <div className="stagger">
+              <h1 className="font-display text-3xl text-[color:var(--green-950)]">Create your BinFetch account</h1>
+              <p className="text-sm text-[color:var(--ink-700)]">
+                Join the cleaner city movement in minutes.
+              </p>
 
-        <div className="flex flex-col gap-4">
-          <input 
-            type="text" placeholder="Full Name" required
-            className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-            onChange={(e) => setFullName(e.target.value)}
-          />
-          <input 
-            type="email" placeholder="Email Address" required
-            className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input 
-            type="password" placeholder="Password" required
-            className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="bg-green-600 text-white font-bold p-3 rounded mt-2 hover:bg-green-700 disabled:bg-gray-400"
-          >
-            {loading ? 'Registering...' : 'Sign Up'}
-          </button>
+              {error && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                  {error}
+                </div>
+              )}
+
+              {notice && (
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status">
+                  {notice}
+                </div>
+              )}
+
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+                Full name
+                <input
+                  type="text"
+                  placeholder="Your full name"
+                  required
+                  autoComplete="name"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+                Email address
+                <input
+                  type="email"
+                  placeholder="you@email.com"
+                  required
+                  autoComplete="email"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+                Password
+                <input
+                  type="password"
+                  placeholder="Create a secure password"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+                I am signing up as
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                >
+                  <option value="customer">Customer</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </label>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-2 w-full rounded-xl bg-[color:var(--green-800)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-white transition hover:bg-[color:var(--green-600)] disabled:cursor-not-allowed disabled:bg-emerald-200"
+              >
+                {loading ? 'Registering...' : 'Create account'}
+              </button>
+
+              <p className="text-center text-sm text-[color:var(--ink-700)]">
+                Already have an account?{' '}
+                <Link href="/login" className="font-semibold text-[color:var(--green-800)] hover:text-[color:var(--green-600)]">
+                  Login here
+                </Link>
+              </p>
+            </div>
+          </form>
+
+          <div className="fade-up order-1 md:order-2">
+            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
+              Together for cleaner cities
+            </span>
+            <h2 className="font-display mt-6 text-4xl text-[color:var(--green-950)] md:text-5xl">
+              Every pickup makes a visible impact
+            </h2>
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-[color:var(--ink-700)]">
+              Track requests, assign teams, and reward consistency. BinFetch
+              helps neighborhoods stay clean with data-driven pickups.
+            </p>
+            <div className="mt-8 grid gap-4 text-sm text-[color:var(--ink-700)]">
+              <div className="rounded-2xl bg-white/70 p-4 shadow-sm">
+                <p className="font-semibold text-[color:var(--green-800)]">Smart routing</p>
+                <p className="mt-1">Dispatch staff efficiently with location-aware queues.</p>
+              </div>
+              <div className="rounded-2xl bg-white/70 p-4 shadow-sm">
+                <p className="font-semibold text-[color:var(--green-800)]">Transparent status</p>
+                <p className="mt-1">Customers know exactly when a pickup is in motion.</p>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account? <Link href="/login" className="text-green-600 hover:underline">Login here</Link>
-        </p>
-      </form>
+      </div>
     </div>
   );
 }

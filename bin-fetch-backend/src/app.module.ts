@@ -1,14 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { SupabaseModule } from './supabase/supabase.module';
+import { CustomerModule } from './customer/customer.module';
+import { StaffModule } from './staff/staff.module';
 
 @Module({
-  imports: [
-    // This loads the .env file automatically
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    AuthModule,
-  ],
+  imports: [AuthModule, SupabaseModule, CustomerModule, StaffModule],
 })
 export class AppModule {}

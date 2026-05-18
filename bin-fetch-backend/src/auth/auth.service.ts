@@ -1,62 +1,51 @@
-import { Injectable, BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { SupabaseService } from '../supabase/supabase.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private jwtService: JwtService,
+  ) {}
 
-  async register(email: string, pass: string, fullName: string) {
+  async register(email: string, password: string, full_name: string, role: string = 'customer') {
     const supabase = this.supabaseService.getClient();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 1. Hash the password securely (10 salt rounds)
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(pass, saltRounds);
-
-    // 2. Insert into the custom_users table
-    const { data, error } = await supabase
+    const { data: userData, error } = await supabase
       .from('users')
-      .insert([{ 
-        email: email, 
-        password: hashedPassword, 
-        full_name: fullName 
-      }])
-      .select();
+      .insert({ email, password: hashedPassword, full_name, role })
+      .select('id, email, role')
+      .single();
 
     if (error) {
-      // If email already exists, Supabase throws an error which we catch here
-      throw new BadRequestException(error.message);
+      if (error.code === '23505') throw new BadRequestException('Email already exists');
+      throw new BadRequestException('Registration failed');
     }
 
-    return { message: 'User registered successfully!', user: data[0] };
+    // Database trigger will insert into customers or staff automatically.
+    return { message: 'User registered successfully', userId: userData.id };
   }
 
-  async login(email: string, pass: string) {
+  async login(email: string, password: string) {
     const supabase = this.supabaseService.getClient();
 
-    // 1. Find the user in the database
     const { data: user, error } = await supabase
-      .from('custom_users')
-      .select('*')
+      .from('users')
+      .select('id, email, password, role')
       .eq('email', email)
       .single();
 
-    if (error || !user) {
-      throw new NotFoundException('User not found. Please register first.');
-    }
+    if (error || !user) throw new UnauthorizedException('Invalid credentials');
 
-    // 2. Compare the typed password with the hashed password in the database
-    const isMatch = await bcrypt.compare(pass, user.password);
-    if (!isMatch) {
-      throw new UnauthorizedException('Invalid password.');
-    }
+    const passwordValid = await bcrypt.compare(password, user.password);
+    if (!passwordValid) throw new UnauthorizedException('Invalid credentials');
 
-    // 3. Return success data
-    return { 
-      message: 'Login successful!', 
-      userId: user.id, 
-      role: user.role,
-      fullName: user.full_name
-    };
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const access_token = this.jwtService.sign(payload);
+
+    return { access_token, userId: user.id, role: user.role };
   }
 }

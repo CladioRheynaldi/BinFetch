@@ -1,25 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
-export class SupabaseService {
-  private supabase: SupabaseClient;
+export class SupabaseService implements OnModuleInit {
+  private supabase!: SupabaseClient;  // added !
 
-  constructor(private configService: ConfigService) {
-    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
-    const supabaseKey = this.configService.get<string>('SUPABASE_KEY');
-
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Supabase environment variables are missing!');
-    }
-
-    // Initialize the client with the Service Role Key
-    this.supabase = createClient(supabaseUrl, supabaseKey);
-  }
-
-  // This allows other parts of our app to use the database connection
-  getClient(): SupabaseClient {
+onModuleInit() {
+  console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
+  console.log('SUPABASE_KEY:', process.env.SUPABASE_KEY ? 'exists' : 'missing');
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_KEY;
+  if (!url || !key) throw new Error('Missing Supabase credentials');
+  this.supabase = createClient(url, key);
+}
+  getClient() {
     return this.supabase;
   }
 }

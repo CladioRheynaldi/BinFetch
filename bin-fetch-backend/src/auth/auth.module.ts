@@ -1,10 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { SupabaseService } from '../supabase/supabase.service';
+import { AuthController } from './auth.controller';
+import { SupabaseModule } from '../supabase/supabase.module';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
+  imports: [
+    SupabaseModule,
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'super-secret-key-change-me',
+      signOptions: { expiresIn: '7d' },
+    }),
+  ],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
-  providers: [AuthService, SupabaseService],
 })
 export class AuthModule {}

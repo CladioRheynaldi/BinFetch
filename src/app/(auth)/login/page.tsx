@@ -1,20 +1,33 @@
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const apiBase = process.env.NEXT_PUBLIC_API_URL;
+
+  const saveSession = (payload: { access_token: string; userId: string; role: string }) => {
+    localStorage.setItem('bf_token', payload.access_token);
+    localStorage.setItem('bf_user_id', payload.userId);
+    localStorage.setItem('bf_role', payload.role);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    console.log("Trying to hit this URL:", `${process.env.NEXT_PUBLIC_API_URL}/auth/login`);
+    if (!apiBase) {
+      setError('Missing NEXT_PUBLIC_API_URL. Add it to your .env file.');
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      const response = await fetch(`${apiBase}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -23,8 +36,12 @@ export default function LoginPage() {
       const data = await response.json();
       
       if (response.ok) {
-        alert(`Welcome back! Your User ID is: ${data.userId}`);
-        // Later, we will redirect to the dashboard here
+        saveSession(data);
+        if (data.role === 'staff') {
+          router.push('/staff/dashboard');
+        } else {
+          router.push('/customer/dashboard');
+        }
       } else {
         setError(data.message || 'Login failed. Check your credentials.');
       }
@@ -36,37 +53,88 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-6 text-center text-green-600">Welcome Back</h1>
-        
-        {error && <div className="mb-4 text-red-500 text-sm text-center">{error}</div>}
+    <div className="auth-shell">
+      <div className="auth-card auth-grid w-full max-w-5xl rounded-3xl p-6 md:p-10">
+        <div className="grid gap-10 md:grid-cols-[1.05fr_0.95fr]">
+          <div className="fade-up">
+            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
+              Clean living
+            </span>
+            <h1 className="font-display mt-6 text-4xl font-semibold text-[color:var(--green-950)] md:text-5xl">
+              Welcome back to BinFetch
+            </h1>
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-[color:var(--ink-700)]">
+              Manage pickup requests, track rewards, and keep your community clean.
+              Log in to continue the green streak.
+            </p>
+            <div className="mt-8 grid gap-4 text-sm text-[color:var(--ink-700)]">
+              <div className="rounded-2xl bg-white/70 p-4 shadow-sm">
+                <p className="font-semibold text-[color:var(--green-800)]">Instant confirmations</p>
+                <p className="mt-1">Get real-time updates the moment a staff member responds.</p>
+              </div>
+              <div className="rounded-2xl bg-white/70 p-4 shadow-sm">
+                <p className="font-semibold text-[color:var(--green-800)]">Rewards that grow</p>
+                <p className="mt-1">Earn points for each pickup and redeem sustainable perks.</p>
+              </div>
+            </div>
+          </div>
 
-        <div className="flex flex-col gap-4">
-          <input 
-            type="email" placeholder="Email Address" required
-            className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input 
-            type="password" placeholder="Password" required
-            className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="bg-green-600 text-white font-bold p-3 rounded mt-2 hover:bg-green-700 disabled:bg-gray-400"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+          <form onSubmit={handleLogin} className="fade-up rounded-2xl bg-white/90 p-6 shadow-xl md:p-8">
+            <div className="stagger">
+              <h2 className="font-display text-2xl text-[color:var(--green-950)]">Sign in</h2>
+              <p className="text-sm text-[color:var(--ink-700)]">
+                Use your registered email and password.
+              </p>
+
+              {error && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                  {error}
+                </div>
+              )}
+
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+                Email address
+                <input
+                  type="email"
+                  placeholder="you@email.com"
+                  required
+                  autoComplete="email"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+                Password
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  minLength={6}
+                  autoComplete="current-password"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </label>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-2 w-full rounded-xl bg-[color:var(--green-800)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-white transition hover:bg-[color:var(--green-600)] disabled:cursor-not-allowed disabled:bg-emerald-200"
+              >
+                {loading ? 'Logging in...' : 'Login'}
+              </button>
+
+              <p className="text-center text-sm text-[color:var(--ink-700)]">
+                New to BinFetch?{' '}
+                <Link href="/register" className="font-semibold text-[color:var(--green-800)] hover:text-[color:var(--green-600)]">
+                  Create an account
+                </Link>
+              </p>
+            </div>
+          </form>
         </div>
-
-        <p className="mt-6 text-center text-sm text-gray-600">
-          New to WasteApp? <Link href="/register" className="text-green-600 hover:underline">Create an account</Link>
-        </p>
-      </form>
+      </div>
     </div>
   );
 }
