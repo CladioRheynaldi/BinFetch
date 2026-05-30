@@ -38,9 +38,9 @@ export default function LoginPage() {
       if (response.ok) {
         saveSession(data);
         if (data.role === 'staff') {
-          router.push('/staff/dashboard');
+          router.push('/staff-dashboard');
         } else {
-          router.push('/customer/dashboard');
+          router.push('/customer-dashboard');
         }
       } else {
         setError(data.message || 'Login failed. Check your credentials.');
