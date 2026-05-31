@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import LocationPicker from '@/components/shared/LocationPicker';
+// import LocationPicker from '@/components/shared/LocationPicker';
 
 const wasteTypes = [
   { value: 'plastic', label: '♻️ Plastic' },
@@ -152,12 +152,12 @@ export default function RequestPickupPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Pickup Location on Map *
                 </label>
-                <LocationPicker onLocationSelect={handleLocationSelect} height="350px" />
+                {/* <LocationPicker onLocationSelect={handleLocationSelect} height="350px" />
                 {coordinates && (
                   <p className="text-xs text-green-600 mt-1">
                     ✓ Location set: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
                   </p>
-                )}
+                )} */}
               </div>
 
               <div>

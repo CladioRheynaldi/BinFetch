@@ -54,8 +54,8 @@ export default function RegisterPage() {
         <div className="grid gap-10 md:grid-cols-[0.95fr_1.05fr]">
           <form onSubmit={handleRegister} className="fade-up order-2 rounded-2xl bg-white/90 p-6 shadow-xl md:order-1 md:p-8">
             <div className="stagger">
-              <h1 className="font-display text-3xl text-[color:var(--green-950)]">Create your BinFetch account</h1>
-              <p className="text-sm text-[color:var(--ink-700)]">
+              <h1 className="font-display text-3xl text-[color:var(--green-darkest)]">Create your BinFetch account</h1>
+              <p className="text-sm text-[color:var(--ink-gray)]">
                 Join the cleaner city movement in minutes.
               </p>
 
@@ -71,31 +71,31 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-gray)]">
                 Full name
                 <input
                   type="text"
                   placeholder="Your full name"
                   required
                   autoComplete="name"
-                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-black)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
                   onChange={(e) => setFullName(e.target.value)}
                 />
               </label>
 
-              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-gray)]">
                 Email address
                 <input
                   type="email"
                   placeholder="you@email.com"
                   required
                   autoComplete="email"
-                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-black)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </label>
 
-              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-gray)]">
                 Password
                 <input
                   type="password"
@@ -103,17 +103,17 @@ export default function RegisterPage() {
                   required
                   minLength={6}
                   autoComplete="new-password"
-                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-black)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </label>
 
-              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-gray)]">
                 I am signing up as
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-black)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
                 >
                   <option value="customer">Customer</option>
                   <option value="staff">Staff</option>
@@ -123,14 +123,14 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-2 w-full rounded-xl bg-[color:var(--green-800)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-white transition hover:bg-[color:var(--green-600)] disabled:cursor-not-allowed disabled:bg-emerald-200"
+                className="mt-2 w-full rounded-xl bg-[color:var(--green-dark)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-white transition hover:bg-[color:var(--green-mid)] disabled:cursor-not-allowed disabled:bg-emerald-200"
               >
                 {loading ? 'Registering...' : 'Create account'}
               </button>
 
-              <p className="text-center text-sm text-[color:var(--ink-700)]">
+              <p className="text-center text-sm text-[color:var(--ink-gray)]">
                 Already have an account?{' '}
-                <Link href="/login" className="font-semibold text-[color:var(--green-800)] hover:text-[color:var(--green-600)]">
+                <Link href="/login" className="font-semibold text-[color:var(--green-dark)] hover:text-[color:var(--green-mid)]">
                   Login here
                 </Link>
               </p>
@@ -141,20 +141,20 @@ export default function RegisterPage() {
             <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
               Together for cleaner cities
             </span>
-            <h2 className="font-display mt-6 text-4xl text-[color:var(--green-950)] md:text-5xl">
+            <h2 className="font-display mt-6 text-4xl text-[color:var(--green-darkest)] md:text-5xl">
               Every pickup makes a visible impact
             </h2>
-            <p className="mt-4 max-w-lg text-base leading-relaxed text-[color:var(--ink-700)]">
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-[color:var(--ink-gray)]">
               Track requests, assign teams, and reward consistency. BinFetch
               helps neighborhoods stay clean with data-driven pickups.
             </p>
-            <div className="mt-8 grid gap-4 text-sm text-[color:var(--ink-700)]">
+            <div className="mt-8 grid gap-4 text-sm text-[color:var(--ink-gray)]">
               <div className="rounded-2xl bg-white/70 p-4 shadow-sm">
-                <p className="font-semibold text-[color:var(--green-800)]">Smart routing</p>
+                <p className="font-semibold text-[color:var(--green-dark)]">Smart routing</p>
                 <p className="mt-1">Dispatch staff efficiently with location-aware queues.</p>
               </div>
               <div className="rounded-2xl bg-white/70 p-4 shadow-sm">
-                <p className="font-semibold text-[color:var(--green-800)]">Transparent status</p>
+                <p className="font-semibold text-[color:var(--green-dark)]">Transparent status</p>
                 <p className="mt-1">Customers know exactly when a pickup is in motion.</p>
               </div>
             </div>

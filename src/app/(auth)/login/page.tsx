@@ -60,20 +60,20 @@ export default function LoginPage() {
             <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
               Clean living
             </span>
-            <h1 className="font-display mt-6 text-4xl font-semibold text-[color:var(--green-950)] md:text-5xl">
+            <h1 className="font-display mt-6 text-4xl font-semibold text-[color:var(--green-darkest)] md:text-5xl">
               Welcome back to BinFetch
             </h1>
-            <p className="mt-4 max-w-lg text-base leading-relaxed text-[color:var(--ink-700)]">
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-[color:var(--ink-gray)]">
               Manage pickup requests, track rewards, and keep your community clean.
               Log in to continue the green streak.
             </p>
-            <div className="mt-8 grid gap-4 text-sm text-[color:var(--ink-700)]">
+            <div className="mt-8 grid gap-4 text-sm text-[color:var(--ink-gray)]">
               <div className="rounded-2xl bg-white/70 p-4 shadow-sm">
-                <p className="font-semibold text-[color:var(--green-800)]">Instant confirmations</p>
+                <p className="font-semibold text-[color:var(--green-dark)]">Instant confirmations</p>
                 <p className="mt-1">Get real-time updates the moment a staff member responds.</p>
               </div>
               <div className="rounded-2xl bg-white/70 p-4 shadow-sm">
-                <p className="font-semibold text-[color:var(--green-800)]">Rewards that grow</p>
+                <p className="font-semibold text-[color:var(--green-dark)]">Rewards that grow</p>
                 <p className="mt-1">Earn points for each pickup and redeem sustainable perks.</p>
               </div>
             </div>
@@ -81,8 +81,8 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="fade-up rounded-2xl bg-white/90 p-6 shadow-xl md:p-8">
             <div className="stagger">
-              <h2 className="font-display text-2xl text-[color:var(--green-950)]">Sign in</h2>
-              <p className="text-sm text-[color:var(--ink-700)]">
+              <h2 className="font-display text-2xl text-[color:var(--green-darkest)]">Sign in</h2>
+              <p className="text-sm text-[color:var(--ink-gray)]">
                 Use your registered email and password.
               </p>
 
@@ -92,19 +92,19 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-gray)]">
                 Email address
                 <input
                   type="email"
                   placeholder="you@email.com"
                   required
                   autoComplete="email"
-                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-black)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </label>
 
-              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-700)]">
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--ink-gray)]">
                 Password
                 <input
                   type="password"
@@ -112,7 +112,7 @@ export default function LoginPage() {
                   required
                   minLength={6}
                   autoComplete="current-password"
-                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-900)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                  className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-[color:var(--ink-black)] outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </label>
@@ -120,14 +120,14 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-2 w-full rounded-xl bg-[color:var(--green-800)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-white transition hover:bg-[color:var(--green-600)] disabled:cursor-not-allowed disabled:bg-emerald-200"
+                className="mt-2 w-full rounded-xl bg-[color:var(--green-dark)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-white transition hover:bg-[color:var(--green-mid)] disabled:cursor-not-allowed disabled:bg-emerald-200"
               >
                 {loading ? 'Logging in...' : 'Login'}
               </button>
 
-              <p className="text-center text-sm text-[color:var(--ink-700)]">
+              <p className="text-center text-sm text-[color:var(--ink-gray)]">
                 New to BinFetch?{' '}
-                <Link href="/register" className="font-semibold text-[color:var(--green-800)] hover:text-[color:var(--green-600)]">
+                <Link href="/register" className="font-semibold text-[color:var(--green-dark)] hover:text-[color:var(--green-mid)]">
                   Create an account
                 </Link>
               </p>
