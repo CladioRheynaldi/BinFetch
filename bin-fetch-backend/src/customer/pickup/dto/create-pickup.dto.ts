@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsString, IsOptional, Min, Max, IsLatitude, IsLongitude } from 'class-validator';
+import { IsEnum, IsNumber, IsString, IsOptional, Min, Max, IsLatitude, IsLongitude, IsDateString } from 'class-validator';
 
 export enum WasteCategory {
   PLASTIC = 'plastic',
@@ -31,4 +31,7 @@ export class CreatePickupDto {
   @IsOptional()
   @IsString()
   special_instructions?: string;
+
+  @IsDateString()
+  created_at!: string;
 }
