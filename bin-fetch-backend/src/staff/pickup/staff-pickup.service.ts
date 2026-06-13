@@ -1,5 +1,5 @@
 
-import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { CompletePickupDto } from './dto/complete-pickup.dto';
 
@@ -223,6 +223,62 @@ export class StaffPickupService {
 
     if (error) throw new ForbiddenException('Failed to mark pickup as processing');
 
-    return { message: 'Pickup is now being processed', pickup: data };
+    return { message: 'Pickup status updated to processing', pickup: data };
+  }
+
+  async getRedemptions() {
+    const supabase = this.supabaseService.getClient();
+    const { data: redemptions, error } = await supabase
+      .from('redemptions')
+      .select(`
+        id,
+        customer_id,
+        item_id,
+        points_spent,
+        status,
+        notes,
+        created_at,
+        reward_items (id, name, image_url)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error || !redemptions) {
+      throw new NotFoundException('Could not fetch redemptions');
+    }
+
+    const enhancedRedemptions = await Promise.all(
+      redemptions.map(async (r) => {
+        let customerName = 'Customer';
+        if (r.customer_id) {
+          const { data: u } = await supabase
+            .from('users')
+            .select('full_name')
+            .eq('id', r.customer_id)
+            .single();
+          if (u?.full_name) customerName = u.full_name;
+        }
+        return {
+          ...r,
+          customer_name: customerName,
+        };
+      })
+    );
+
+    return enhancedRedemptions;
+  }
+
+  async completeRedemption(redemptionId: string) {
+    const supabase = this.supabaseService.getClient();
+    const { data, error } = await supabase
+      .from('redemptions')
+      .update({ status: 'completed', updated_at: new Date() })
+      .eq('id', redemptionId)
+      .select()
+      .single();
+
+    if (error || !data) {
+      throw new BadRequestException('Failed to complete redemption request');
+    }
+    return { message: 'Redemption marked as completed', redemption: data };
   }
 }

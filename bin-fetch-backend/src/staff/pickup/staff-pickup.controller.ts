@@ -38,6 +38,17 @@ async complete(
     return this.staffPickupService.getAssignedPickups(req.user.userId);
   }
 
+  @Get('redemptions')
+  getRedemptions() {
+    return this.staffPickupService.getRedemptions();
+  }
+
+  @Patch('redemptions/:id/complete')
+  @HttpCode(HttpStatus.OK)
+  completeRedemption(@Param('id') id: string) {
+    return this.staffPickupService.completeRedemption(id);
+  }
+
   
   @Patch(':id/cancel')
   @HttpCode(HttpStatus.OK)
