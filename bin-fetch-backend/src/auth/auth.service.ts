@@ -25,7 +25,7 @@ export class AuthService {
       throw new BadRequestException('Registration failed');
     }
 
-    // Database trigger will insert into customers or staff automatically.
+    
     return { message: 'User registered successfully', userId: userData.id };
   }
 
@@ -34,7 +34,7 @@ export class AuthService {
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, password, role')
+      .select('id, email, password, role, full_name')
       .eq('email', email)
       .single();
 
@@ -46,6 +46,6 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email, role: user.role };
     const access_token = this.jwtService.sign(payload);
 
-    return { access_token, userId: user.id, role: user.role };
+    return { access_token, userId: user.id, role: user.role, fullName: user.full_name };
   }
 }

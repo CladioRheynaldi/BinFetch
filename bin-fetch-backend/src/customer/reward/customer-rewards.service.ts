@@ -5,21 +5,21 @@ import { SupabaseService } from '../../supabase/supabase.service';
 export class CustomerRewardsService {
   constructor(private supabaseService: SupabaseService) {}
 
-  // Get all active reward items (with stock > 0 if you want only available)
+  
   async getAvailableItems() {
     const supabase = this.supabaseService.getClient();
     const { data, error } = await supabase
       .from('reward_items')
       .select('*')
       .eq('is_active', true)
-      .gt('stock_quantity', 0) // only items in stock
+      .gt('stock_quantity', 0) 
       .order('points_cost', { ascending: true });
 
     if (error) throw new NotFoundException('Could not fetch reward items');
     return data;
   }
 
-  // Get customer's redemption history
+  
   async getRedemptionHistory(customerId: string) {
     const supabase = this.supabaseService.getClient();
     const { data, error } = await supabase
@@ -39,11 +39,11 @@ export class CustomerRewardsService {
     return data;
   }
 
-  // Redeem an item
+  
   async redeemItem(customerId: string, itemId: string) {
     const supabase = this.supabaseService.getClient();
 
-    // 1. Get customer's current points
+    
     const { data: customer, error: customerError } = await supabase
       .from('customers')
       .select('reward_points')
@@ -54,7 +54,7 @@ export class CustomerRewardsService {
       throw new NotFoundException('Customer not found');
     }
 
-    // 2. Get the reward item details
+    
     const { data: item, error: itemError } = await supabase
       .from('reward_items')
       .select('*')
@@ -74,10 +74,10 @@ export class CustomerRewardsService {
       throw new BadRequestException('Insufficient points');
     }
 
-    // 3. Start transaction (using a single supabase query with RPC or manual steps)
-    // Since Supabase does not support multi-statement transactions easily, we'll do a sequence with error handling.
+    
+    
 
-    // a. Deduct points from customer
+    
     const { error: pointsError } = await supabase
       .from('customers')
       .update({ reward_points: customer.reward_points - item.points_cost })
@@ -85,14 +85,14 @@ export class CustomerRewardsService {
 
     if (pointsError) throw new ForbiddenException('Failed to deduct points');
 
-    // b. Decrement stock
+    
     const { error: stockError } = await supabase
       .from('reward_items')
       .update({ stock_quantity: item.stock_quantity - 1 })
       .eq('id', itemId);
 
     if (stockError) {
-      // rollback points (optional but good)
+      
       await supabase
         .from('customers')
         .update({ reward_points: customer.reward_points })
@@ -100,7 +100,7 @@ export class CustomerRewardsService {
       throw new ForbiddenException('Failed to update stock');
     }
 
-    // c. Create redemption record
+    
     const { data: redemption, error: redemptionError } = await supabase
       .from('redemptions')
       .insert({
@@ -113,7 +113,7 @@ export class CustomerRewardsService {
       .single();
 
     if (redemptionError) {
-      // rollback points and stock
+      
       await supabase
         .from('customers')
         .update({ reward_points: customer.reward_points })

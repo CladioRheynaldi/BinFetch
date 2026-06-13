@@ -2,7 +2,19 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-// import LocationPicker from '@/components/shared/LocationPicker';
+import dynamic from 'next/dynamic';
+
+const LocationPicker = dynamic(
+  () => import('@/components/shared/LocationPicker'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[350px] w-full bg-gray-100 rounded-lg flex items-center justify-center border border-gray-300">
+        <span className="text-gray-500">Loading interactive map...</span>
+      </div>
+    ),
+  }
+);
 
 const wasteTypes = [
   { value: 'plastic', label: '♻️ Plastic' },
@@ -24,9 +36,11 @@ export default function RequestPickupPage() {
     special_instructions: '',
   });
 
-  const handleLocationSelect = (lat: number, lng: number) => {
+  const handleLocationSelect = (lat: number, lng: number, address?: string) => {
     setCoordinates({ lat, lng });
-    // Optional: you could reverse geocode here to auto-fill address
+    if (address) {
+      setFormData((prev) => ({ ...prev, pickup_address: address }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,14 +48,14 @@ export default function RequestPickupPage() {
     setLoading(true);
     setError('');
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('bf_token');
     if (!token) {
       setError('Please login again');
       router.push('/login');
       return;
     }
 
-    // Validate that a location is selected
+    
     if (!coordinates) {
       setError('Please select a pickup location on the map.');
       setLoading(false);
@@ -57,11 +71,12 @@ export default function RequestPickupPage() {
         },
         body: JSON.stringify({
           waste_type: formData.waste_type,
-          estimated_volume_kg: formData.estimated_volume_kg,
+          volume_kg: formData.estimated_volume_kg,
           pickup_address: formData.pickup_address,
           special_instructions: formData.special_instructions,
           pickup_lat: coordinates.lat,
           pickup_lng: coordinates.lng,
+          created_at: new Date().toISOString(),
         }),
       });
 
@@ -72,7 +87,7 @@ export default function RequestPickupPage() {
 
       const result = await response.json();
       alert(`✅ Pickup request created! Your request is pending.`);
-      router.push('/customer/my-requests');
+      router.push('/my-request');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -152,12 +167,12 @@ export default function RequestPickupPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Pickup Location on Map *
                 </label>
-                {/* <LocationPicker onLocationSelect={handleLocationSelect} height="350px" />
+                <LocationPicker onLocationSelect={handleLocationSelect} height="350px" />
                 {coordinates && (
                   <p className="text-xs text-green-600 mt-1">
                     ✓ Location set: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
                   </p>
-                )} */}
+                )}
               </div>
 
               <div>

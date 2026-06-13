@@ -3,7 +3,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class SupabaseService implements OnModuleInit {
-  private supabase!: SupabaseClient;  // added !
+  private supabase!: SupabaseClient;  
 
 onModuleInit() {
   console.log('SUPABASE_URL:', process.env.SUPABASE_URL);

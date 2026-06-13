@@ -4,7 +4,7 @@ import { IsEnum } from 'class-validator';
 export enum PickupStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
-  PROCESSING = 'processing',   // NEW
+  PROCESSING = 'processing',   
   COMPLETED = 'completed',
   CANCELLED = 'cancelled',
 }

@@ -5,7 +5,7 @@ import L from 'leaflet';
 import { requestLocation } from '@/lib/location';
 import { Coordinates } from '@/types/location';
 
-// Fix Leaflet icon paths
+
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
@@ -14,7 +14,7 @@ L.Icon.Default.mergeOptions({
 });
 
 interface LocationPickerProps {
-  onLocationSelect: (lat: number, lng: number) => void;
+  onLocationSelect: (lat: number, lng: number, address?: string) => void;
   initialLocation?: Coordinates;
   height?: string;
 }
@@ -37,13 +37,13 @@ export default function LocationPicker({
   const [error, setError] = useState<string | null>(null);
   const [currentLocation, setCurrentLocation] = useState<Coordinates | undefined>(initialLocation);
   
-  // Search state
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Geocode search (Nominatim)
+  
   const searchAddress = useCallback(async (query: string) => {
     if (!query.trim()) {
       setSuggestions([]);
@@ -63,7 +63,7 @@ export default function LocationPicker({
     }
   }, []);
 
-  // Debounced search
+  
   const handleSearchInput = (value: string) => {
     setSearchQuery(value);
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
@@ -72,7 +72,7 @@ export default function LocationPicker({
     }, 500);
   };
 
-  // When user clicks a suggestion
+  
   const handleSelectSuggestion = (suggestion: Suggestion) => {
     const lat = parseFloat(suggestion.lat);
     const lng = parseFloat(suggestion.lon);
@@ -89,10 +89,10 @@ export default function LocationPicker({
       }
       markerRef.current.bindPopup('Selected location').openPopup();
     }
-    onLocationSelect(lat, lng);
+    onLocationSelect(lat, lng, suggestion.display_name);
   };
 
-  // "Use my current location" (unchanged)
+  
   const handleUseMyLocation = async () => {
     setLoading(true);
     setError(null);
@@ -100,7 +100,21 @@ export default function LocationPicker({
     if (location) {
       const newLoc = { lat: location.lat, lng: location.lng };
       setCurrentLocation(newLoc);
-      setSearchQuery(''); // clear search when using current location
+      
+      let address = '';
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${location.lat}&lon=${location.lng}&format=json`
+        );
+        const data = await response.json();
+        if (data && data.display_name) {
+          setSearchQuery(data.display_name);
+          address = data.display_name;
+        }
+      } catch (err) {
+        console.error('Reverse geocoding error:', err);
+      }
+
       if (mapInstanceRef.current) {
         mapInstanceRef.current.setView([location.lat, location.lng], 15);
         if (markerRef.current) {
@@ -110,18 +124,18 @@ export default function LocationPicker({
         }
         markerRef.current.bindPopup('Your location').openPopup();
       }
-      onLocationSelect(location.lat, location.lng);
+      onLocationSelect(location.lat, location.lng, address);
     }
     setLoading(false);
   };
 
-  // Initialize map (unchanged, but add a callback for when map is ready)
+  
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     const defaultCenter: [number, number] = currentLocation
       ? [currentLocation.lat, currentLocation.lng]
-      : [-6.200000, 106.816666]; // Jakarta fallback
+      : [-6.200000, 106.816666]; 
 
     mapInstanceRef.current = L.map(mapRef.current).setView(defaultCenter, 13);
 
@@ -131,8 +145,8 @@ export default function LocationPicker({
       maxZoom: 19,
     }).addTo(mapInstanceRef.current);
 
-    // Click on map to place marker
-    mapInstanceRef.current.on('click', (e: L.LeafletMouseEvent) => {
+    
+    mapInstanceRef.current.on('click', async (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
       if (markerRef.current) {
         markerRef.current.setLatLng([lat, lng]);
@@ -140,11 +154,26 @@ export default function LocationPicker({
         markerRef.current = L.marker([lat, lng]).addTo(mapInstanceRef.current!);
       }
       setCurrentLocation({ lat, lng });
-      setSearchQuery(''); // clear search when clicking map
-      onLocationSelect(lat, lng);
+      setSearchQuery('');
+      
+      let address = '';
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+        );
+        const data = await response.json();
+        if (data && data.display_name) {
+          setSearchQuery(data.display_name);
+          address = data.display_name;
+        }
+      } catch (err) {
+        console.error('Reverse geocoding error:', err);
+      }
+      
+      onLocationSelect(lat, lng, address);
     });
 
-    // If initial location exists, add marker
+    
     if (currentLocation) {
       markerRef.current = L.marker([currentLocation.lat, currentLocation.lng])
         .addTo(mapInstanceRef.current)
@@ -158,9 +187,9 @@ export default function LocationPicker({
         mapInstanceRef.current = null;
       }
     };
-  }, []); // Run once
+  }, []); 
 
-  // Update marker if currentLocation changes externally (e.g., from search)
+  
   useEffect(() => {
     if (currentLocation && mapInstanceRef.current) {
       if (markerRef.current) {
@@ -172,7 +201,7 @@ export default function LocationPicker({
 
   return (
     <div className="space-y-3">
-      {/* Search input with suggestions */}
+      {}
       <div className="relative">
         <input
           type="text"

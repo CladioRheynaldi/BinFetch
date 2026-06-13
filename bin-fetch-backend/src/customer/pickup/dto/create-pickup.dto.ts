@@ -10,15 +10,15 @@ export enum WasteCategory {
 
 export class CreatePickupDto {
   @IsEnum(WasteCategory)
-  waste_type!: WasteCategory;   // added !
+  waste_type!: WasteCategory;   
 
   @IsNumber()
   @Min(0.1)
   @Max(500)
-  volume_kg!: number;            // added !
+  volume_kg!: number;            
 
   @IsString()
-  pickup_address!: string;       // added !
+  pickup_address!: string;       
 
   @IsOptional()
   @IsLatitude()
@@ -32,6 +32,7 @@ export class CreatePickupDto {
   @IsString()
   special_instructions?: string;
 
+  @IsOptional()
   @IsDateString()
-  created_at!: string;
+  created_at?: string;
 }

@@ -45,7 +45,7 @@ var AppService = function () {
     var _classDescriptor;
     var _classExtraInitializers = [];
     var _classThis;
-    var AppService = _classThis = /** @class */ (function () {
+    var AppService = _classThis =  (function () {
         function AppService_1() {
         }
         AppService_1.prototype.getHello = function () {

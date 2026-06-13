@@ -45,7 +45,7 @@ var auth_module_1 = require("./auth/auth.module");
 var AppModule = function () {
     var _classDecorators = [(0, common_1.Module)({
             imports: [
-                // This loads the .env file automatically
+                
                 config_1.ConfigModule.forRoot({
                     isGlobal: true,
                 }),
@@ -55,7 +55,7 @@ var AppModule = function () {
     var _classDescriptor;
     var _classExtraInitializers = [];
     var _classThis;
-    var AppModule = _classThis = /** @class */ (function () {
+    var AppModule = _classThis =  (function () {
         function AppModule_1() {
         }
         return AppModule_1;

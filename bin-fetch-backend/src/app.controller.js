@@ -47,7 +47,7 @@ var AppController = function () {
     var _classThis;
     var _instanceExtraInitializers = [];
     var _getHello_decorators;
-    var AppController = _classThis = /** @class */ (function () {
+    var AppController = _classThis =  (function () {
         function AppController_1(appService) {
             this.appService = (__runInitializers(this, _instanceExtraInitializers), appService);
         }

@@ -82,7 +82,7 @@ var AuthService = function () {
     var _classDescriptor;
     var _classExtraInitializers = [];
     var _classThis;
-    var AuthService = _classThis = /** @class */ (function () {
+    var AuthService = _classThis =  (function () {
         function AuthService_1(supabaseService) {
             this.supabaseService = supabaseService;
         }
@@ -94,10 +94,10 @@ var AuthService = function () {
                         case 0:
                             supabase = this.supabaseService.getClient();
                             saltRounds = 10;
-                            return [4 /*yield*/, bcrypt.hash(pass, saltRounds)];
+                            return [4 , bcrypt.hash(pass, saltRounds)];
                         case 1:
                             hashedPassword = _b.sent();
-                            return [4 /*yield*/, supabase
+                            return [4 , supabase
                                     .from('users')
                                     .insert([{
                                         email: email,
@@ -108,10 +108,10 @@ var AuthService = function () {
                         case 2:
                             _a = _b.sent(), data = _a.data, error = _a.error;
                             if (error) {
-                                // If email already exists, Supabase throws an error which we catch here
+                                
                                 throw new common_1.BadRequestException(error.message);
                             }
-                            return [2 /*return*/, { message: 'User registered successfully!', user: data[0] }];
+                            return [2 , { message: 'User registered successfully!', user: data[0] }];
                     }
                 });
             });
@@ -123,7 +123,7 @@ var AuthService = function () {
                     switch (_b.label) {
                         case 0:
                             supabase = this.supabaseService.getClient();
-                            return [4 /*yield*/, supabase
+                            return [4 , supabase
                                     .from('custom_users')
                                     .select('*')
                                     .eq('email', email)
@@ -133,14 +133,14 @@ var AuthService = function () {
                             if (error || !user) {
                                 throw new common_1.NotFoundException('User not found. Please register first.');
                             }
-                            return [4 /*yield*/, bcrypt.compare(pass, user.password)];
+                            return [4 , bcrypt.compare(pass, user.password)];
                         case 2:
                             isMatch = _b.sent();
                             if (!isMatch) {
                                 throw new common_1.UnauthorizedException('Invalid password.');
                             }
-                            // 3. Return success data
-                            return [2 /*return*/, {
+                            
+                            return [2 , {
                                     message: 'Login successful!',
                                     userId: user.id,
                                     role: user.role,

@@ -17,6 +17,11 @@ export class CustomerPickupController {
     return this.pickupService.create(req.user.userId, dto);
   }
 
+  @Get('profile')
+  getProfile(@Request() req) {
+    return this.pickupService.getProfile(req.user.userId);
+  }
+
   @Get('my-requests')
   getMyRequests(@Request() req) {
     return this.pickupService.findByUser(req.user.userId);

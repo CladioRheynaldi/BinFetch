@@ -10,7 +10,7 @@ export class CustomerPickupService {
   async create(userId: string, dto: CreatePickupDto) {
     const supabase = this.supabaseService.getClient();
 
-    // 1. Ensure the user is a customer
+    
     const { data: customer, error: checkError } = await supabase
       .from('customers')
       .select('user_id')
@@ -21,7 +21,7 @@ export class CustomerPickupService {
       throw new ForbiddenException('Only customers can request pickups');
     }
 
-    // 2. Find staff member with the smallest workload
+    
     const { data: staffMember, error: staffError } = await supabase
       .from('staff')
       .select('user_id, workload')
@@ -33,7 +33,7 @@ export class CustomerPickupService {
       throw new BadRequestException('No staff available to assign this pickup');
     }
 
-    // 3. Create the pickup request, auto-assign to selected staff
+    
     const { data: pickup, error: insertError } = await supabase
       .from('pickup_requests')
       .insert({
@@ -44,8 +44,8 @@ export class CustomerPickupService {
         pickup_lat: dto.pickup_lat,
         pickup_lng: dto.pickup_lng,
         special_instructions: dto.special_instructions,
-        created_at: dto.created_at,
-        status: 'pending',               // Staff can accept/reject later
+        created_at: dto.created_at || new Date().toISOString(),
+        status: 'pending',               
         assigned_staff_id: staffMember.user_id,
       })
       .select()
@@ -55,7 +55,7 @@ export class CustomerPickupService {
       throw new ForbiddenException('Failed to create pickup request');
     }
 
-    // 4. Increment the staff's workload by 1 (atomic update)
+    
     const { error: workloadError } = await supabase
       .from('staff')
       .update({ workload: staffMember.workload + 1 })
@@ -63,7 +63,7 @@ export class CustomerPickupService {
 
     if (workloadError) {
       console.error('Failed to update staff workload:', workloadError);
-      // Not critical for the pickup creation, but log it.
+      
     }
 
     return {
@@ -160,6 +160,20 @@ export class CustomerPickupService {
     }
 
     return { message: 'Pickup request deleted' };
+  }
+
+  async getProfile(userId: string) {
+    const supabase = this.supabaseService.getClient();
+    const { data, error } = await supabase
+      .from('customers')
+      .select('reward_points')
+      .eq('user_id', userId)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException('Customer profile not found');
+    }
+    return data;
   }
 }
 

@@ -46,7 +46,7 @@ var SupabaseService = function () {
     var _classDescriptor;
     var _classExtraInitializers = [];
     var _classThis;
-    var SupabaseService = _classThis = /** @class */ (function () {
+    var SupabaseService = _classThis =  (function () {
         function SupabaseService_1(configService) {
             this.configService = configService;
             var supabaseUrl = this.configService.get('SUPABASE_URL');
@@ -54,10 +54,10 @@ var SupabaseService = function () {
             if (!supabaseUrl || !supabaseKey) {
                 throw new Error('Supabase environment variables are missing!');
             }
-            // Initialize the client with the Service Role Key
+            
             this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
         }
-        // This allows other parts of our app to use the database connection
+        
         SupabaseService_1.prototype.getClient = function () {
             return this.supabase;
         };

@@ -51,7 +51,7 @@ var AuthModule = function () {
     var _classDescriptor;
     var _classExtraInitializers = [];
     var _classThis;
-    var AuthModule = _classThis = /** @class */ (function () {
+    var AuthModule = _classThis =  (function () {
         function AuthModule_1() {
         }
         return AuthModule_1;

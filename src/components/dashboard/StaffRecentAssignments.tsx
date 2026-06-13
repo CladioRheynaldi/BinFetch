@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface Pickup {
   id: string;
@@ -60,12 +61,13 @@ export default function StaffRecentAssignments() {
       ) : (
         <div className="space-y-4">
           {pickups.map((pickup) => (
-            <div
+            <Link
               key={pickup.id}
-              className="flex items-center justify-between border-b border-green-100 pb-4"
+              href={`/pickups?id=${pickup.id}&status=${pickup.status}`}
+              className="flex items-center justify-between border-b border-green-100 pb-4 hover:bg-green-50/50 p-2 rounded-2xl transition group"
             >
               <div>
-                <p className="font-semibold">
+                <p className="font-semibold group-hover:text-[var(--green-mid)] transition">
                   {pickup.waste_type}
                 </p>
 
@@ -77,7 +79,7 @@ export default function StaffRecentAssignments() {
               <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
                 {pickup.status}
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       )}

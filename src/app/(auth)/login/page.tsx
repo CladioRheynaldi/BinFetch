@@ -11,10 +11,13 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const apiBase = process.env.NEXT_PUBLIC_API_URL;
 
-  const saveSession = (payload: { access_token: string; userId: string; role: string }) => {
+  const saveSession = (payload: { access_token: string; userId: string; role: string; fullName?: string }) => {
     localStorage.setItem('bf_token', payload.access_token);
     localStorage.setItem('bf_user_id', payload.userId);
     localStorage.setItem('bf_role', payload.role);
+    if (payload.fullName) {
+      localStorage.setItem('bf_full_name', payload.fullName);
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {

@@ -1,4 +1,4 @@
-// src/staff/pickup/staff-pickup.controller.ts
+
 import { Controller, Get, Patch, Param, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
 import { StaffPickupService } from './staff-pickup.service';
 import { JwtAuthGuard } from '../../common/guards/auth.guard';
@@ -38,7 +38,7 @@ async complete(
     return this.staffPickupService.getAssignedPickups(req.user.userId);
   }
 
-  // ✅ NEW: Cancel endpoint
+  
   @Patch(':id/cancel')
   @HttpCode(HttpStatus.OK)
   cancel(@Param('id') id: string, @Request() req) {

@@ -84,7 +84,7 @@ var AuthController = function () {
     var _instanceExtraInitializers = [];
     var _register_decorators;
     var _login_decorators;
-    var AuthController = _classThis = /** @class */ (function () {
+    var AuthController = _classThis =  (function () {
         function AuthController_1(authService) {
             this.authService = (__runInitializers(this, _instanceExtraInitializers), authService);
         }
@@ -93,7 +93,7 @@ var AuthController = function () {
                 var email, password, fullName;
                 return __generator(this, function (_a) {
                     email = body.email, password = body.password, fullName = body.fullName;
-                    return [2 /*return*/, this.authService.register(email, password, fullName)];
+                    return [2 , this.authService.register(email, password, fullName)];
                 });
             });
         };
@@ -102,7 +102,7 @@ var AuthController = function () {
                 var email, password;
                 return __generator(this, function (_a) {
                     email = body.email, password = body.password;
-                    return [2 /*return*/, this.authService.login(email, password)];
+                    return [2 , this.authService.login(email, password)];
                 });
             });
         };

@@ -43,21 +43,21 @@ function bootstrap() {
         var app;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, core_1.NestFactory.create(app_module_1.AppModule)];
+                case 0: return [4 , core_1.NestFactory.create(app_module_1.AppModule)];
                 case 1:
                     app = _a.sent();
-                    // CRITICAL: This allows your Next.js frontend to talk to this backend
+                    
                     app.enableCors({
-                        origin: '*', // During development, we allow all origins.
+                        origin: '*', 
                         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
                     });
-                    // Start the backend on port 3000
-                    return [4 /*yield*/, app.listen(3000)];
+                    
+                    return [4 , app.listen(3000)];
                 case 2:
-                    // Start the backend on port 3000
+                    
                     _a.sent();
                     console.log(" NestJS Backend is running on: http://localhost:3000");
-                    return [2 /*return*/];
+                    return [2 ];
             }
         });
     });

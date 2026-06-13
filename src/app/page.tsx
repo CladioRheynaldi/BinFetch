@@ -1,10 +1,8 @@
 import Link from "next/link";
-import Navbar from '@/components/Navbar';
 
 export default function Home() {
   return (
     <>
-      <Navbar />
       <main
         className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center"
         style={{
@@ -12,7 +10,7 @@ export default function Home() {
         }}
       >
 
-        {/* Content */}
+        {}
         <div className="max-w-md text-center px-6">
           <h1 className="text-5xl font-bold mb-6 text-[var(--green-darkest)]">
             BinFetch
